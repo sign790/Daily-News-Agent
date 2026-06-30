@@ -1,0 +1,45 @@
+﻿name: Daily News Email
+
+on:
+  schedule:
+    # Beijing/Shanghai 09:00 = UTC 01:00.
+    # Use minute 7 to avoid the top-of-hour Actions rush.
+    - cron: "7 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      NEWS_AGENT_MODEL: ${{ vars.NEWS_AGENT_MODEL || 'gpt-5.4' }}
+      NEWS_TIMEZONE: ${{ vars.NEWS_TIMEZONE || 'Asia/Shanghai' }}
+      NEWS_RUN_TIME: ${{ vars.NEWS_RUN_TIME || '09:00' }}
+      NEWS_MAX_ARTICLES: ${{ vars.NEWS_MAX_ARTICLES || '80' }}
+      NEWS_STORY_LIMIT: ${{ vars.NEWS_STORY_LIMIT || '12' }}
+      NEWS_TOPICS: ${{ vars.NEWS_TOPICS || '全球头条, 科技与AI, 地缘政治, 宏观经济与市场, 加密货币政策, 中国与全球贸易科技关系, 体育重大事件, 商业与大公司' }}
+      NEWS_EMAIL_REQUIREMENTS: ${{ vars.NEWS_EMAIL_REQUIREMENTS || '用中文写，重点说明为什么重要；每条新闻保留来源和链接；忙碌读者可以在5分钟内读完。' }}
+      NEWS_EMAIL_TO: ${{ secrets.NEWS_EMAIL_TO }}
+      NEWS_EMAIL_FROM: ${{ secrets.NEWS_EMAIL_FROM }}
+      SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.gmail.com' }}
+      SMTP_PORT: ${{ vars.SMTP_PORT || '587' }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_USE_SSL: ${{ vars.SMTP_USE_SSL || 'false' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send daily news email
+        run: python main.py
