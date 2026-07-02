@@ -1,15 +1,16 @@
 ﻿# Daily News Agent
 
-一个用 OpenAI Agents SDK 做的个人新闻简报工具：每天抓取 RSS 新闻源，让 Agent 选出重要新闻，生成中文邮件简报，并发送到指定邮箱。
+A personal daily news briefing tool built with the OpenAI Agents SDK. It fetches RSS news sources every day, lets an Agent select the most important stories, generates a Chinese email briefing, and sends it to the specified email address.
 
-## 功能
+## Features
 
-- 抓取 BBC、Bloomberg、CoinDesk、The Verge 等 RSS 源
-- 关注全球热点、科技与 AI、地缘政治、宏观市场、加密政策、中国相关国际新闻、重大体育事件
-- 默认最多输出 12 条新闻
-- 支持 dry-run 测试，不发邮件
-- 支持 SMTP 发邮件
-- 支持按固定时间循环运行
+Fetches RSS sources such as BBC, Bloomberg, CoinDesk, The Verge, and more
+Covers global headlines, technology and AI, geopolitics, macro markets, crypto policy, China-related international news, and major sports events
+Outputs up to 12 news items by default
+Supports dry-run testing without sending emails
+Supports sending emails via SMTP
+Supports scheduled runs at a fixed time
+Local-first design
 
 
 ## Local-first design
@@ -23,7 +24,7 @@ For most users, the safest setup is:
 3. Fill in their own keys and email settings locally.
 4. Run `python web_app.py` and use the local browser UI.
 
-## 安装
+## Installation
 
 ```powershell
 python -m venv .venv
@@ -31,9 +32,9 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## 配置
+## Configuration
 
-复制 `.env.example` 为 `.env`，然后填写自己的配置：
+Copy .env.example to .env, then fill in your own configuration:
 
 ```env
 OPENAI_API_KEY=your-openai-api-key
@@ -50,50 +51,44 @@ SMTP_PASSWORD=
 SMTP_USE_SSL=false
 ```
 
-多个收件人可以用英文逗号隔开，例如 `receiver@example.com, second@example.com`。`n`n不要把 `.env` 上传到 GitHub。仓库里只应该保留 `.env.example`。
+Multiple recipients can be separated by English commas, for example: 
+
+NEWS_EMAIL_TO=receiver@example.com, second@example.com
 
 
-## 网页界面
+## Web Interface
 
-启动本地控制台：
+Start the local control panel:
 
-```powershell
 python web_app.py
-```
 
-然后打开：
+Then open:
 
-```text
 http://127.0.0.1:8765
-```
 
-网页里可以填写模型、收件邮箱、发件邮箱、SMTP 授权码、主题偏好、最终新闻条数和邮件要求。密钥会保存到本机 `.env`，不要把 `.env` 上传到 GitHub。
+In the web interface, you can enter the model, recipient email, sender email, SMTP app password, topic preferences, final number of news items, and email requirements.
 
-## 运行
+Secrets will be saved locally to .env. Do not upload .env to GitHub.
 
-只生成简报，不发邮件：
+## Usage
 
-```powershell
+Generate the briefing without sending an email:
+
 python main.py --dry-run
-```
 
-生成并发送邮件：
+Generate the briefing and send the email:
 
-```powershell
 python main.py
-```
 
-一直运行，并在 `.env` 里的 `NEWS_RUN_TIME` 时间触发：
+Keep the program running and trigger it at the NEWS_RUN_TIME set in .env:
 
-```powershell
 python main.py --schedule
-```
 
-## 安全提醒
+## Security Notes
 
-- 建议使用专门的小号邮箱作为发件人
-- `SMTP_PASSWORD` 使用 Gmail App Password 或邮箱 SMTP 授权码，不要使用主密码
-- `.env`、API key、邮箱授权码不要提交到 GitHub
+Use a dedicated secondary email account as the sender when possible
+Use a Gmail App Password or an email SMTP authorization code for SMTP_PASSWORD; do not use your main email password
+Do not commit .env, API keys, or email authorization codes to GitHub
 
 
 
